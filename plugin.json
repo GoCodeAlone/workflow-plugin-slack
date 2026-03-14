@@ -1,0 +1,28 @@
+{
+  "name": "slack",
+  "version": "0.1.0",
+  "author": "GoCodeAlone",
+  "description": "Slack messaging, file uploads, and real-time event triggers via Socket Mode",
+  "type": "external",
+  "tier": "community",
+  "license": "MIT",
+  "minEngineVersion": "0.3.40",
+  "keywords": ["slack", "messaging", "chat", "notifications", "events", "socketmode"],
+  "homepage": "https://github.com/GoCodeAlone/workflow-plugin-slack",
+  "repository": "https://github.com/GoCodeAlone/workflow-plugin-slack",
+  "capabilities": {
+    "configProvider": false,
+    "moduleTypes": ["slack.provider"],
+    "stepTypes": [
+      "step.slack_send_message",
+      "step.slack_send_blocks",
+      "step.slack_edit_message",
+      "step.slack_delete_message",
+      "step.slack_add_reaction",
+      "step.slack_upload_file",
+      "step.slack_send_thread_reply",
+      "step.slack_set_topic"
+    ],
+    "triggerTypes": ["trigger.slack"]
+  }
+}
