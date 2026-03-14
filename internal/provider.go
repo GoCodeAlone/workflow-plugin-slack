@@ -3,11 +3,17 @@ package internal
 import (
 	"context"
 	"fmt"
+	"io"
+	"strings"
 	"sync"
 
+	messaging "github.com/GoCodeAlone/workflow-plugin-messaging-core"
 	"github.com/slack-go/slack"
 	"github.com/slack-go/slack/socketmode"
 )
+
+// Compile-time interface satisfaction check.
+var _ messaging.Provider = (*slackProvider)(nil)
 
 // slackProvider is the slack.provider module. It holds the Slack bot client and
 // Socket Mode client, exposing them to steps and the trigger via the provider registry.
@@ -89,4 +95,64 @@ func getProvider(name string) (*slackProvider, error) {
 func stringFrom(m map[string]any, key string) string {
 	v, _ := m[key].(string)
 	return v
+}
+
+// --- messaging.Provider implementation ---
+
+// Name returns the platform identifier.
+func (m *slackProvider) Name() string { return "slack" }
+
+// SendMessage sends a plain text message and returns the message timestamp.
+func (m *slackProvider) SendMessage(_ context.Context, channelID, content string, _ *messaging.MessageOpts) (string, error) {
+	_, ts, _, err := m.client.SendMessage(channelID, slack.MsgOptionText(content, false))
+	if err != nil {
+		return "", fmt.Errorf("slack send: %w", err)
+	}
+	return ts, nil
+}
+
+// EditMessage updates an existing message identified by its timestamp.
+func (m *slackProvider) EditMessage(_ context.Context, channelID, messageID, content string) error {
+	_, _, _, err := m.client.UpdateMessage(channelID, messageID, slack.MsgOptionText(content, false))
+	return err
+}
+
+// DeleteMessage removes a message.
+func (m *slackProvider) DeleteMessage(_ context.Context, channelID, messageID string) error {
+	_, _, err := m.client.DeleteMessage(channelID, messageID)
+	return err
+}
+
+// SendReply sends a threaded reply and returns the reply's timestamp.
+func (m *slackProvider) SendReply(_ context.Context, channelID, parentID, content string, _ *messaging.MessageOpts) (string, error) {
+	_, ts, _, err := m.client.SendMessage(channelID,
+		slack.MsgOptionText(content, false),
+		slack.MsgOptionTS(parentID),
+	)
+	if err != nil {
+		return "", fmt.Errorf("slack reply: %w", err)
+	}
+	return ts, nil
+}
+
+// React adds an emoji reaction to a message.
+func (m *slackProvider) React(_ context.Context, channelID, messageID, emoji string) error {
+	return m.client.AddReaction(emoji, slack.ItemRef{Channel: channelID, Timestamp: messageID})
+}
+
+// UploadFile sends a file to a channel and returns the file ID.
+func (m *slackProvider) UploadFile(_ context.Context, channelID string, file io.Reader, filename string) (string, error) {
+	buf := new(strings.Builder)
+	if _, err := io.Copy(buf, file); err != nil {
+		return "", fmt.Errorf("slack upload read: %w", err)
+	}
+	f, err := m.client.UploadFile(slack.UploadFileParameters{
+		Channel:  channelID,
+		Filename: filename,
+		Content:  buf.String(),
+	})
+	if err != nil {
+		return "", fmt.Errorf("slack upload: %w", err)
+	}
+	return f.ID, nil
 }

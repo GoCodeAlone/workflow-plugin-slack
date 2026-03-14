@@ -22,6 +22,7 @@ require (
 	github.com/GoCodeAlone/modular v1.12.3 // indirect
 	github.com/GoCodeAlone/modular/modules/auth v1.14.0 // indirect
 	github.com/GoCodeAlone/modular/modules/eventbus/v2 v2.7.0 // indirect
+	github.com/GoCodeAlone/workflow-plugin-messaging-core v0.1.0 // indirect
 	github.com/GoCodeAlone/yaegi v0.17.1 // indirect
 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.30.0 // indirect
 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/metric v0.55.0 // indirect
