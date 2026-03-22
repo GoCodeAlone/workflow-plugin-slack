@@ -30,7 +30,7 @@ func (s *sendMessageStep) Execute(_ context.Context, _ map[string]any, _ map[str
 	}); err != nil {
 		return nil, fmt.Errorf("slack_send_message: %w", err)
 	}
-	return &sdk.StepResult{Output: map[string]any{"channel": ch, "timestamp": ts}}, nil
+	return &sdk.StepResult{Output: map[string]any{"ok": true, "channel": ch, "ts": ts, "timestamp": ts}}, nil
 }
 
 // --- step.slack_send_blocks ---
@@ -49,10 +49,12 @@ func (s *sendBlocksStep) Execute(_ context.Context, _ map[string]any, _ map[stri
 	}
 
 	// blocks can be a JSON string or already a slice.
-	var blocks []slack.Block
+	// Use slack.Blocks (not []slack.Block) to leverage its custom UnmarshalJSON
+	// which handles the type-discriminated block union.
+	var blocksContainer slack.Blocks
 	switch v := blocksRaw.(type) {
 	case string:
-		if err := json.Unmarshal([]byte(v), &blocks); err != nil {
+		if err := json.Unmarshal([]byte(v), &blocksContainer); err != nil {
 			return nil, fmt.Errorf("slack_send_blocks: invalid blocks JSON: %w", err)
 		}
 	default:
@@ -60,19 +62,19 @@ func (s *sendBlocksStep) Execute(_ context.Context, _ map[string]any, _ map[stri
 		if err != nil {
 			return nil, fmt.Errorf("slack_send_blocks: marshal blocks: %w", err)
 		}
-		if err := json.Unmarshal(raw, &blocks); err != nil {
+		if err := json.Unmarshal(raw, &blocksContainer); err != nil {
 			return nil, fmt.Errorf("slack_send_blocks: unmarshal blocks: %w", err)
 		}
 	}
 
 	var ch, ts string
 	if err := withRateLimit(func() error {
-		ch, ts, _, err = p.client.SendMessage(channelID, slack.MsgOptionBlocks(blocks...))
+		ch, ts, _, err = p.client.SendMessage(channelID, slack.MsgOptionBlocks(blocksContainer.BlockSet...))
 		return err
 	}); err != nil {
 		return nil, fmt.Errorf("slack_send_blocks: %w", err)
 	}
-	return &sdk.StepResult{Output: map[string]any{"channel": ch, "timestamp": ts}}, nil
+	return &sdk.StepResult{Output: map[string]any{"ok": true, "channel": ch, "ts": ts, "timestamp": ts}}, nil
 }
 
 // --- step.slack_edit_message ---
@@ -204,7 +206,7 @@ func (s *sendThreadReplyStep) Execute(_ context.Context, _ map[string]any, _ map
 	}); err != nil {
 		return nil, fmt.Errorf("slack_send_thread_reply: %w", err)
 	}
-	return &sdk.StepResult{Output: map[string]any{"channel": ch, "timestamp": ts}}, nil
+	return &sdk.StepResult{Output: map[string]any{"ok": true, "channel": ch, "ts": ts, "timestamp": ts, "thread_ts": threadTS}}, nil
 }
 
 // --- step.slack_set_topic ---
@@ -227,5 +229,12 @@ func (s *setTopicStep) Execute(_ context.Context, _ map[string]any, _ map[string
 	}); err != nil {
 		return nil, fmt.Errorf("slack_set_topic: %w", err)
 	}
-	return &sdk.StepResult{Output: map[string]any{"channel": channelID, "topic": topic}}, nil
+	return &sdk.StepResult{Output: map[string]any{
+		"ok": true,
+		"channel": map[string]any{
+			"id":    channelID,
+			"topic": map[string]any{"value": topic},
+		},
+		"topic": topic,
+	}}, nil
 }

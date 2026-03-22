@@ -21,6 +21,8 @@ type slackProvider struct {
 	name         string
 	botToken     string
 	appToken     string
+	baseURL      string // optional: overrides the Slack API base URL (for testing)
+	mockMode     bool   // when true, skips token validation and Socket Mode connection
 	client       *slack.Client
 	socketClient *socketmode.Client
 }
@@ -32,27 +34,45 @@ var (
 )
 
 func newSlackProvider(name string, config map[string]any) *slackProvider {
+	mockMode := false
+	if v, ok := config["mock_mode"].(bool); ok {
+		mockMode = v
+	}
 	return &slackProvider{
 		name:     name,
 		botToken: stringFrom(config, "bot_token"),
 		appToken: stringFrom(config, "app_token"),
+		baseURL:  stringFrom(config, "baseURL"),
+		mockMode: mockMode,
 	}
 }
 
 // Init creates the Slack clients.
 func (m *slackProvider) Init() error {
-	if m.botToken == "" {
-		return fmt.Errorf("slack.provider %q: bot_token is required", m.name)
-	}
-	if m.appToken == "" {
-		return fmt.Errorf("slack.provider %q: app_token is required (Socket Mode requires an xapp- token)", m.name)
+	if !m.mockMode {
+		if m.botToken == "" {
+			return fmt.Errorf("slack.provider %q: bot_token is required", m.name)
+		}
+		if m.appToken == "" {
+			return fmt.Errorf("slack.provider %q: app_token is required (Socket Mode requires an xapp- token)", m.name)
+		}
 	}
 
-	m.client = slack.New(
-		m.botToken,
-		slack.OptionAppLevelToken(m.appToken),
-	)
-	m.socketClient = socketmode.New(m.client)
+	opts := []slack.Option{}
+	if m.baseURL != "" {
+		opts = append(opts, slack.OptionAPIURL(m.baseURL+"/"))
+	}
+	if m.appToken != "" {
+		opts = append(opts, slack.OptionAppLevelToken(m.appToken))
+	}
+	token := m.botToken
+	if token == "" {
+		token = "xoxb-mock-token"
+	}
+	m.client = slack.New(token, opts...)
+	if !m.mockMode && m.appToken != "" {
+		m.socketClient = socketmode.New(m.client)
+	}
 
 	providersMu.Lock()
 	providers[m.name] = m
@@ -63,6 +83,9 @@ func (m *slackProvider) Init() error {
 
 // Start opens the Socket Mode WebSocket connection in the background.
 func (m *slackProvider) Start(ctx context.Context) error {
+	if m.mockMode || m.socketClient == nil {
+		return nil
+	}
 	go func() {
 		if err := m.socketClient.RunContext(ctx); err != nil && ctx.Err() == nil {
 			// Context cancellation is normal shutdown — only unexpected errors matter here.
