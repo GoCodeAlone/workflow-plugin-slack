@@ -6,6 +6,12 @@ import (
 	sdk "github.com/GoCodeAlone/workflow/plugin/external/sdk"
 )
 
+// Version is set at build time via -ldflags
+// "-X github.com/GoCodeAlone/workflow-plugin-slack/internal.Version=X.Y.Z".
+// Default is a bare semver so plugin loaders that validate semver accept
+// unreleased dev builds; goreleaser overrides with the real release tag.
+var Version = "0.0.0"
+
 // slackPlugin implements PluginProvider, ModuleProvider, StepProvider, TriggerProvider, and SchemaProvider.
 type slackPlugin struct{}
 
@@ -16,7 +22,7 @@ func New() *slackPlugin { return &slackPlugin{} }
 func (p *slackPlugin) Manifest() sdk.PluginManifest {
 	return sdk.PluginManifest{
 		Name:        "slack",
-		Version:     "0.1.0",
+		Version:     Version,
 		Author:      "GoCodeAlone",
 		Description: "Slack messaging, file uploads, and real-time event triggers via Socket Mode",
 	}
