@@ -1,0 +1,74 @@
+{
+  "version": "1",
+  "contracts": [
+    {
+      "kind": "module",
+      "type": "slack.provider",
+      "mode": "strict",
+      "config": "slack.v1.SlackProviderConfig"
+    },
+    {
+      "kind": "step",
+      "type": "step.slack_send_message",
+      "mode": "strict",
+      "input": "slack.v1.SendMessageInput",
+      "output": "slack.v1.SendMessageOutput"
+    },
+    {
+      "kind": "step",
+      "type": "step.slack_send_blocks",
+      "mode": "strict",
+      "input": "slack.v1.SendBlocksInput",
+      "output": "slack.v1.SendBlocksOutput"
+    },
+    {
+      "kind": "step",
+      "type": "step.slack_edit_message",
+      "mode": "strict",
+      "input": "slack.v1.EditMessageInput",
+      "output": "slack.v1.EditMessageOutput"
+    },
+    {
+      "kind": "step",
+      "type": "step.slack_delete_message",
+      "mode": "strict",
+      "input": "slack.v1.DeleteMessageInput",
+      "output": "slack.v1.DeleteMessageOutput"
+    },
+    {
+      "kind": "step",
+      "type": "step.slack_add_reaction",
+      "mode": "strict",
+      "input": "slack.v1.AddReactionInput",
+      "output": "slack.v1.AddReactionOutput"
+    },
+    {
+      "kind": "step",
+      "type": "step.slack_upload_file",
+      "mode": "strict",
+      "input": "slack.v1.UploadFileInput",
+      "output": "slack.v1.UploadFileOutput"
+    },
+    {
+      "kind": "step",
+      "type": "step.slack_send_thread_reply",
+      "mode": "strict",
+      "input": "slack.v1.SendThreadReplyInput",
+      "output": "slack.v1.SendThreadReplyOutput"
+    },
+    {
+      "kind": "step",
+      "type": "step.slack_set_topic",
+      "mode": "strict",
+      "input": "slack.v1.SetTopicInput",
+      "output": "slack.v1.SetTopicOutput"
+    },
+    {
+      "kind": "trigger",
+      "type": "trigger.slack",
+      "mode": "strict",
+      "config": "slack.v1.SlackTriggerConfig",
+      "output": "slack.v1.SlackTriggerPayload"
+    }
+  ]
+}
