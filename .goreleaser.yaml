@@ -4,6 +4,7 @@ before:
   hooks:
     - "cp plugin.json plugin.json.orig"
     - "sed -i.bak 's/\"version\": \".*\"/\"version\": \"{{ .Version }}\"/' plugin.json && rm -f plugin.json.bak"
+    - "sed -i.bak 's|/download/v[^/]*/|/download/v{{ .Version }}/|g' plugin.json && rm -f plugin.json.bak"
 
 builds:
   - main: ./cmd/{{ .ProjectName }}
@@ -24,6 +25,7 @@ archives:
     name_template: "{{ .ProjectName }}-{{ .Os }}-{{ .Arch }}"
     files:
       - plugin.json
+      - plugin.contracts.json
 
 checksum:
   name_template: checksums.txt
