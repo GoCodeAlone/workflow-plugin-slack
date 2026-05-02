@@ -2,9 +2,9 @@ version: 2
 
 before:
   hooks:
-    - "cp plugin.json plugin.json.orig"
-    - "sed -i.bak 's/\"version\": \".*\"/\"version\": \"{{ .Version }}\"/' plugin.json && rm -f plugin.json.bak"
-    - "sed -i.bak 's|/download/v[^/]*/|/download/v{{ .Version }}/|g' plugin.json && rm -f plugin.json.bak"
+    - "sh -c 'rm -rf .goreleaser-tmp && mkdir -p .goreleaser-tmp && cp plugin.json .goreleaser-tmp/plugin.json'"
+    - "sh -c 'sed -i.bak \"s/\\\"version\\\": \\\".*\\\"/\\\"version\\\": \\\"{{ .Version }}\\\"/\" .goreleaser-tmp/plugin.json && rm -f .goreleaser-tmp/plugin.json.bak'"
+    - "sh -c 'sed -i.bak \"s|/download/v[^/]*/|/download/v{{ .Version }}/|g\" .goreleaser-tmp/plugin.json && rm -f .goreleaser-tmp/plugin.json.bak'"
 
 builds:
   - main: ./cmd/{{ .ProjectName }}
@@ -24,7 +24,8 @@ archives:
   - formats: [tar.gz]
     name_template: "{{ .ProjectName }}-{{ .Os }}-{{ .Arch }}"
     files:
-      - plugin.json
+      - src: .goreleaser-tmp/plugin.json
+        dst: plugin.json
       - plugin.contracts.json
 
 checksum:
