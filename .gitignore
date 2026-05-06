@@ -1,1 +1,3 @@
 workflow-plugin-slack-linux
+.goreleaser-tmp/
+dist/
