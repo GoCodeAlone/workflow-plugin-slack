@@ -10,5 +10,5 @@ import (
 )
 
 func main() {
-	sdk.Serve(internal.New())
+	sdk.Serve(internal.New(), sdk.WithBuildVersion(sdk.ResolveBuildVersion(internal.Version)))
 }
