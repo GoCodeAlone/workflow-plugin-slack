@@ -3,7 +3,7 @@ module github.com/GoCodeAlone/workflow-plugin-slack
 go 1.26.1
 
 require (
-	github.com/GoCodeAlone/workflow v0.62.0
+	github.com/GoCodeAlone/workflow v0.64.0
 	github.com/GoCodeAlone/workflow-plugin-messaging-core v0.1.0
 	github.com/slack-go/slack v0.19.0
 )
