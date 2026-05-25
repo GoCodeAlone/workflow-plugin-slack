@@ -1,61 +1,61 @@
 {
-    "name": "slack",
-    "version": "0.1.2",
-    "author": "GoCodeAlone",
-    "description": "Slack messaging, file uploads, and real-time event triggers via Socket Mode",
-    "type": "external",
-    "tier": "community",
-    "license": "MIT",
-    "minEngineVersion": "0.51.7",
-    "keywords": [
-        "slack",
-        "messaging",
-        "chat",
-        "notifications",
-        "events",
-        "socketmode"
+  "name": "slack",
+  "version": "0.0.0",
+  "author": "GoCodeAlone",
+  "description": "Slack messaging, file uploads, and real-time event triggers via Socket Mode",
+  "type": "external",
+  "tier": "community",
+  "license": "MIT",
+  "minEngineVersion": "0.51.7",
+  "keywords": [
+    "slack",
+    "messaging",
+    "chat",
+    "notifications",
+    "events",
+    "socketmode"
+  ],
+  "homepage": "https://github.com/GoCodeAlone/workflow-plugin-slack",
+  "repository": "https://github.com/GoCodeAlone/workflow-plugin-slack",
+  "capabilities": {
+    "configProvider": false,
+    "moduleTypes": [
+      "slack.provider"
     ],
-    "homepage": "https://github.com/GoCodeAlone/workflow-plugin-slack",
-    "repository": "https://github.com/GoCodeAlone/workflow-plugin-slack",
-    "capabilities": {
-        "configProvider": false,
-        "moduleTypes": [
-            "slack.provider"
-        ],
-        "stepTypes": [
-            "step.slack_send_message",
-            "step.slack_send_blocks",
-            "step.slack_edit_message",
-            "step.slack_delete_message",
-            "step.slack_add_reaction",
-            "step.slack_upload_file",
-            "step.slack_send_thread_reply",
-            "step.slack_set_topic"
-        ],
-        "triggerTypes": [
-            "trigger.slack"
-        ]
-    },
-    "downloads": [
-        {
-            "os": "linux",
-            "arch": "amd64",
-            "url": "https://github.com/GoCodeAlone/workflow-plugin-slack/releases/download/v0.1.2/workflow-plugin-slack-linux-amd64.tar.gz"
-        },
-        {
-            "os": "linux",
-            "arch": "arm64",
-            "url": "https://github.com/GoCodeAlone/workflow-plugin-slack/releases/download/v0.1.2/workflow-plugin-slack-linux-arm64.tar.gz"
-        },
-        {
-            "os": "darwin",
-            "arch": "amd64",
-            "url": "https://github.com/GoCodeAlone/workflow-plugin-slack/releases/download/v0.1.2/workflow-plugin-slack-darwin-amd64.tar.gz"
-        },
-        {
-            "os": "darwin",
-            "arch": "arm64",
-            "url": "https://github.com/GoCodeAlone/workflow-plugin-slack/releases/download/v0.1.2/workflow-plugin-slack-darwin-arm64.tar.gz"
-        }
+    "stepTypes": [
+      "step.slack_send_message",
+      "step.slack_send_blocks",
+      "step.slack_edit_message",
+      "step.slack_delete_message",
+      "step.slack_add_reaction",
+      "step.slack_upload_file",
+      "step.slack_send_thread_reply",
+      "step.slack_set_topic"
+    ],
+    "triggerTypes": [
+      "trigger.slack"
     ]
+  },
+  "downloads": [
+    {
+      "os": "linux",
+      "arch": "amd64",
+      "url": "https://github.com/GoCodeAlone/workflow-plugin-slack/releases/download/v0.1.2/workflow-plugin-slack-linux-amd64.tar.gz"
+    },
+    {
+      "os": "linux",
+      "arch": "arm64",
+      "url": "https://github.com/GoCodeAlone/workflow-plugin-slack/releases/download/v0.1.2/workflow-plugin-slack-linux-arm64.tar.gz"
+    },
+    {
+      "os": "darwin",
+      "arch": "amd64",
+      "url": "https://github.com/GoCodeAlone/workflow-plugin-slack/releases/download/v0.1.2/workflow-plugin-slack-darwin-amd64.tar.gz"
+    },
+    {
+      "os": "darwin",
+      "arch": "arm64",
+      "url": "https://github.com/GoCodeAlone/workflow-plugin-slack/releases/download/v0.1.2/workflow-plugin-slack-darwin-arm64.tar.gz"
+    }
+  ]
 }
